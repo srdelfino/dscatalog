@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.pro.delfino.dscatalog.entities.Categoria;
+import br.pro.delfino.dscatalog.dto.CategoriaDTO;
 import br.pro.delfino.dscatalog.services.CategoriaService;
 
 @RestController
@@ -18,8 +18,8 @@ public class CategoriaResource {
 	private CategoriaService service;
 	
 	@GetMapping
-	public ResponseEntity<List<Categoria>> buscarTudo(){
-		List<Categoria> lista = service.buscarTudo();
+	public ResponseEntity<List<CategoriaDTO>> buscarTudo(){
+		List<CategoriaDTO> lista = service.buscarTudo();
 		return ResponseEntity.ok().body(lista);
 	}
 }
