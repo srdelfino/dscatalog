@@ -1,7 +1,7 @@
 package br.pro.delfino.dscatalog.services;
 
 import java.util.List;
-import java.util.stream.Collector;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,5 +27,13 @@ public class CategoriaService {
 			.collect(Collectors.toList());
 		
 		return categoriasDTO;
+	}
+
+	@Transactional(readOnly = true)
+	public CategoriaDTO buscarPorId(Long id) {
+		Optional<Categoria> opcional = repository.findById(id);
+		Categoria categoria = opcional.get();
+		CategoriaDTO dto = new CategoriaDTO(categoria);
+		return dto;
 	}
 }
