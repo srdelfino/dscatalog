@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.pro.delfino.dscatalog.dto.ProdutoDTO;
+import br.pro.delfino.dscatalog.entities.Categoria;
 import br.pro.delfino.dscatalog.entities.Produto;
+import br.pro.delfino.dscatalog.repositories.CategoriaRepository;
 import br.pro.delfino.dscatalog.repositories.ProdutoRepository;
 import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
 import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;
@@ -23,11 +25,14 @@ import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosExce
 @Service
 public class ProdutoService {
 	@Autowired
-	private ProdutoRepository repositorio;
+	private ProdutoRepository produtoRepositorio;
+	
+	@Autowired
+	private CategoriaRepository categoriaRepositorio;
 
 	@Transactional(readOnly = true)
 	public List<ProdutoDTO> buscarTudo() {
-		List<Produto> lista = repositorio.findAll();
+		List<Produto> lista = produtoRepositorio.findAll();
 
 		List<ProdutoDTO> listaDTO = lista.stream().map(entidade -> new ProdutoDTO(entidade))
 				.collect(Collectors.toList());
@@ -37,7 +42,7 @@ public class ProdutoService {
 	
 	@Transactional(readOnly = true)
 	public Page<ProdutoDTO> buscarTudo(PageRequest paginacao) {
-		Page<Produto> lista = repositorio.findAll(paginacao);
+		Page<Produto> lista = produtoRepositorio.findAll(paginacao);
 		
 		Page<ProdutoDTO> listaDTO = lista
 			.map(entidade -> new ProdutoDTO(entidade));
@@ -47,7 +52,7 @@ public class ProdutoService {
 
 	@Transactional(readOnly = true)
 	public ProdutoDTO buscarPorId(Long id) {
-		Optional<Produto> opcional = repositorio.findById(id);
+		Optional<Produto> opcional = produtoRepositorio.findById(id);
 
 		Produto entidade = opcional.orElseThrow(() -> new EntidadeNaoEncontradaException("Entidade não encontrada"));
 
@@ -58,13 +63,9 @@ public class ProdutoService {
 	@Transactional
 	public ProdutoDTO inserir(ProdutoDTO dto) {
 		Produto entidade = new Produto();
-		entidade.setData(dto.getData());
-		entidade.setDescricao(dto.getDescricao());
-		entidade.setImagem(dto.getImagem());
-		entidade.setNome(dto.getNome());
-		entidade.setPreco(dto.getPreco());
+		converterDTOParaEntidade(dto, entidade);
 
-		repositorio.save(entidade);
+		produtoRepositorio.save(entidade);
 
 		dto = new ProdutoDTO(entidade);
 		return dto;
@@ -73,14 +74,10 @@ public class ProdutoService {
 	@Transactional
 	public ProdutoDTO editar(Long id, ProdutoDTO dto) {
 		try {
-			Produto entidade = repositorio.getOne(id);
-			entidade.setData(dto.getData());
-			entidade.setDescricao(dto.getDescricao());
-			entidade.setImagem(dto.getImagem());
-			entidade.setNome(dto.getNome());
-			entidade.setPreco(dto.getPreco());
+			Produto entidade = produtoRepositorio.getOne(id);
+			converterDTOParaEntidade(dto, entidade);
 
-			repositorio.save(entidade);
+			produtoRepositorio.save(entidade);
 
 			dto = new ProdutoDTO(entidade);
 			return dto;
@@ -92,11 +89,26 @@ public class ProdutoService {
 	@Transactional
 	public void excluir(Long id) {
 		try {
-			repositorio.deleteById(id);
+			produtoRepositorio.deleteById(id);
 		} catch (EmptyResultDataAccessException excecao) {
 			throw new EntidadeNaoEncontradaException("ID não encontrado: " + id);
 		} catch (DataIntegrityViolationException excecao) {
 			throw new ViolacaoIntegridadeDadosException("Violação da integridade referencial");
 		}
+	}
+	
+	private void converterDTOParaEntidade(ProdutoDTO dto, Produto entidade) {
+		entidade.setData(dto.getData());
+		entidade.setDescricao(dto.getDescricao());
+		entidade.setImagem(dto.getImagem());
+		entidade.setNome(dto.getNome());
+		entidade.setPreco(dto.getPreco());
+		
+		entidade.getCategorias().clear();
+		
+		dto.getCategorias().forEach(categoriaDTO -> {
+			Categoria categoriaEntidade = categoriaRepositorio.getOne(categoriaDTO.getId());
+			entidade.getCategorias().add(categoriaEntidade);
+		});
 	}
 }
