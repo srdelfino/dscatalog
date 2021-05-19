@@ -1,9 +1,11 @@
 package br.pro.delfino.dscatalog.resources;
 
 import java.net.URI;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -25,8 +28,14 @@ public class CategoriaResource {
 	private CategoriaService service;
 
 	@GetMapping
-	public ResponseEntity<List<CategoriaDTO>> buscarTudo() {
-		List<CategoriaDTO> lista = service.buscarTudo();
+	public ResponseEntity<Page<CategoriaDTO>> buscarTudo(
+		@RequestParam(defaultValue = "0") Integer pagina,
+		@RequestParam(defaultValue = "10") Integer linhasPorPagina,
+		@RequestParam(defaultValue = "ASC") String direcao,
+		@RequestParam(defaultValue = "nome") String ordenadoPor
+		) {
+		PageRequest paginacao = PageRequest.of(pagina, linhasPorPagina, Direction.valueOf(direcao), ordenadoPor);
+		Page<CategoriaDTO> lista = service.buscarTudo(paginacao);
 		return ResponseEntity.ok(lista);
 	}
 
@@ -48,7 +57,7 @@ public class CategoriaResource {
 		dto = service.editar(id, dto);
 		return ResponseEntity.ok(dto);
 	}
-	
+
 	@DeleteMapping(value = "/{id}")
 	public ResponseEntity<Void> excluir(@PathVariable Long id) {
 		service.excluir(id);

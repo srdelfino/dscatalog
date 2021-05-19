@@ -9,6 +9,8 @@ import javax.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +32,16 @@ public class CategoriaService {
 		List<CategoriaDTO> categoriasDTO = categorias.stream().map(categoria -> new CategoriaDTO(categoria))
 				.collect(Collectors.toList());
 
+		return categoriasDTO;
+	}
+	
+	@Transactional(readOnly = true)
+	public Page<CategoriaDTO> buscarTudo(PageRequest paginacao) {
+		Page<Categoria> categorias = repository.findAll(paginacao);
+		
+		Page<CategoriaDTO> categoriasDTO = categorias
+			.map(categoria -> new CategoriaDTO(categoria));
+			
 		return categoriasDTO;
 	}
 
