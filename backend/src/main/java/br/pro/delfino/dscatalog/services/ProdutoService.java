@@ -14,67 +14,75 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.pro.delfino.dscatalog.dto.CategoriaDTO;
-import br.pro.delfino.dscatalog.entities.Categoria;
-import br.pro.delfino.dscatalog.repositories.CategoriaRepository;
+import br.pro.delfino.dscatalog.dto.ProdutoDTO;
+import br.pro.delfino.dscatalog.entities.Produto;
+import br.pro.delfino.dscatalog.repositories.ProdutoRepository;
 import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
 import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;
 
 @Service
-public class CategoriaService {
+public class ProdutoService {
 	@Autowired
-	private CategoriaRepository repositorio;
+	private ProdutoRepository repositorio;
 
 	@Transactional(readOnly = true)
-	public List<CategoriaDTO> buscarTudo() {
-		List<Categoria> lista = repositorio.findAll();
+	public List<ProdutoDTO> buscarTudo() {
+		List<Produto> lista = repositorio.findAll();
 
-		List<CategoriaDTO> listaDTO = lista.stream().map(entidade -> new CategoriaDTO(entidade))
+		List<ProdutoDTO> listaDTO = lista.stream().map(entidade -> new ProdutoDTO(entidade))
 				.collect(Collectors.toList());
 
 		return listaDTO;
 	}
 	
 	@Transactional(readOnly = true)
-	public Page<CategoriaDTO> buscarTudo(PageRequest paginacao) {
-		Page<Categoria> lista = repositorio.findAll(paginacao);
+	public Page<ProdutoDTO> buscarTudo(PageRequest paginacao) {
+		Page<Produto> lista = repositorio.findAll(paginacao);
 		
-		Page<CategoriaDTO> listaDTO = lista
-			.map(entidade -> new CategoriaDTO(entidade));
+		Page<ProdutoDTO> listaDTO = lista
+			.map(entidade -> new ProdutoDTO(entidade));
 			
 		return listaDTO;
 	}
 
 	@Transactional(readOnly = true)
-	public CategoriaDTO buscarPorId(Long id) {
-		Optional<Categoria> opcional = repositorio.findById(id);
+	public ProdutoDTO buscarPorId(Long id) {
+		Optional<Produto> opcional = repositorio.findById(id);
 
-		Categoria entidade = opcional.orElseThrow(() -> new EntidadeNaoEncontradaException("Entidade não encontrada"));
+		Produto entidade = opcional.orElseThrow(() -> new EntidadeNaoEncontradaException("Entidade não encontrada"));
 
-		CategoriaDTO dto = new CategoriaDTO(entidade);
+		ProdutoDTO dto = new ProdutoDTO(entidade, entidade.getCategorias());
 		return dto;
 	}
 
 	@Transactional
-	public CategoriaDTO inserir(CategoriaDTO dto) {
-		Categoria entidade = new Categoria();
+	public ProdutoDTO inserir(ProdutoDTO dto) {
+		Produto entidade = new Produto();
+		entidade.setData(dto.getData());
+		entidade.setDescricao(dto.getDescricao());
+		entidade.setImagem(dto.getImagem());
 		entidade.setNome(dto.getNome());
+		entidade.setPreco(dto.getPreco());
 
 		repositorio.save(entidade);
 
-		dto = new CategoriaDTO(entidade);
+		dto = new ProdutoDTO(entidade);
 		return dto;
 	}
 
 	@Transactional
-	public CategoriaDTO editar(Long id, CategoriaDTO dto) {
+	public ProdutoDTO editar(Long id, ProdutoDTO dto) {
 		try {
-			Categoria entidade = repositorio.getOne(id);
+			Produto entidade = repositorio.getOne(id);
+			entidade.setData(dto.getData());
+			entidade.setDescricao(dto.getDescricao());
+			entidade.setImagem(dto.getImagem());
 			entidade.setNome(dto.getNome());
+			entidade.setPreco(dto.getPreco());
 
 			repositorio.save(entidade);
 
-			dto = new CategoriaDTO(entidade);
+			dto = new ProdutoDTO(entidade);
 			return dto;
 		} catch (EntityNotFoundException excecao) {
 			throw new EntidadeNaoEncontradaException("ID não encontrado: " + id);

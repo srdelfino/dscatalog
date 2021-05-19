@@ -18,42 +18,42 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import br.pro.delfino.dscatalog.dto.CategoriaDTO;
-import br.pro.delfino.dscatalog.services.CategoriaService;
+import br.pro.delfino.dscatalog.dto.ProdutoDTO;
+import br.pro.delfino.dscatalog.services.ProdutoService;
 
 @RestController
-@RequestMapping(value = "/categorias")
-public class CategoriaResource {
+@RequestMapping(value = "/produtos")
+public class ProdutoResource {
 	@Autowired
-	private CategoriaService servico;
+	private ProdutoService servico;
 
 	@GetMapping
-	public ResponseEntity<Page<CategoriaDTO>> buscarTudo(
+	public ResponseEntity<Page<ProdutoDTO>> buscarTudo(
 		@RequestParam(defaultValue = "0") Integer pagina,
 		@RequestParam(defaultValue = "10") Integer linhasPorPagina,
 		@RequestParam(defaultValue = "ASC") String direcao,
 		@RequestParam(defaultValue = "nome") String ordenadoPor
 		) {
 		PageRequest paginacao = PageRequest.of(pagina, linhasPorPagina, Direction.valueOf(direcao), ordenadoPor);
-		Page<CategoriaDTO> lista = servico.buscarTudo(paginacao);
+		Page<ProdutoDTO> lista = servico.buscarTudo(paginacao);
 		return ResponseEntity.ok(lista);
 	}
 
 	@GetMapping(value = "/{id}")
-	public ResponseEntity<CategoriaDTO> buscarPorId(@PathVariable Long id) {
-		CategoriaDTO dto = servico.buscarPorId(id);
+	public ResponseEntity<ProdutoDTO> buscarPorId(@PathVariable Long id) {
+		ProdutoDTO dto = servico.buscarPorId(id);
 		return ResponseEntity.ok(dto);
 	}
 
 	@PostMapping
-	public ResponseEntity<CategoriaDTO> inserir(@RequestBody CategoriaDTO dto) {
+	public ResponseEntity<ProdutoDTO> inserir(@RequestBody ProdutoDTO dto) {
 		dto = servico.inserir(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<CategoriaDTO> editar(@PathVariable Long id, @RequestBody CategoriaDTO dto) {
+	public ResponseEntity<ProdutoDTO> editar(@PathVariable Long id, @RequestBody ProdutoDTO dto) {
 		dto = servico.editar(id, dto);
 		return ResponseEntity.ok(dto);
 	}

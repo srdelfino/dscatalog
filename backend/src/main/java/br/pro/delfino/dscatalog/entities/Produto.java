@@ -3,6 +3,7 @@ package br.pro.delfino.dscatalog.entities;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -64,7 +65,7 @@ public class Produto implements Serializable {
 		inverseJoinColumns = @JoinColumn(name = "categoria_id")
 	)
 	@Getter
-	private Set<Categoria> categorias;
+	private Set<Categoria> categorias = new HashSet<>();
 
 	public Produto(Long id, String nome, String descricao, BigDecimal preco, String imagem, Instant data) {
 		this.id = id;

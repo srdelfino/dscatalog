@@ -3,6 +3,7 @@ package br.pro.delfino.dscatalog.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -41,7 +42,7 @@ public class ProdutoDTO implements Serializable {
 	private Instant data;
 	
 	@Getter
-	private List<CategoriaDTO> categorias;
+	private List<CategoriaDTO> categorias = new ArrayList<>();
 
 	public ProdutoDTO(Long id, String nome, String descricao, BigDecimal preco, String imagem, Instant data) {
 		super();
