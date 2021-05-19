@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
+import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;
 
 @ControllerAdvice
 public class RosourceExceptionHandler {
@@ -26,5 +27,20 @@ public class RosourceExceptionHandler {
 		erro.setCaminho(requisicao.getRequestURI());
 		
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
+	}
+	
+	@ExceptionHandler(ViolacaoIntegridadeDadosException.class)
+	public ResponseEntity<ErroPadrao> violacaoIntegridadeDados(
+		EntidadeNaoEncontradaException excecao, 
+		HttpServletRequest requisicao){
+		
+		ErroPadrao erro = new ErroPadrao();
+		erro.setHorario(Instant.now());
+		erro.setSituacao(HttpStatus.BAD_REQUEST.value());
+		erro.setErro("Violação de integridade de dados");
+		erro.setMensagem(excecao.getMessage());
+		erro.setCaminho(requisicao.getRequestURI());
+		
+		return ResponseEntity.badRequest().body(erro);
 	}
 }
