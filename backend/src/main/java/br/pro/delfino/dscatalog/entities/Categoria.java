@@ -20,7 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Entity
-@Table(name = "tbl_categorias")
+@Table(name = "categoria")
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
@@ -34,7 +34,6 @@ public class Categoria implements Serializable {
 	@Setter
 	private Long id;
 	
-	@Column(length = 50)
 	@Getter
 	@Setter
 	private String nome;
