@@ -41,4 +41,14 @@ public class CategoriaService {
 		CategoriaDTO dto = new CategoriaDTO(categoria);
 		return dto;
 	}
+
+	public CategoriaDTO inserir(CategoriaDTO dto) {
+		Categoria categoria = new Categoria();
+		categoria.setNome(dto.getNome());
+		
+		repository.save(categoria);
+		
+		dto = new CategoriaDTO(categoria);
+		return dto;
+	}
 }
