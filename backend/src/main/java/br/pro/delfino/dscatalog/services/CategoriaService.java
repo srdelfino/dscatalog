@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.pro.delfino.dscatalog.dto.CategoriaDTO;
 import br.pro.delfino.dscatalog.entities.Categoria;
 import br.pro.delfino.dscatalog.repositories.CategoriaRepository;
+import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
 
 @Service
 public class CategoriaService {
@@ -32,7 +33,11 @@ public class CategoriaService {
 	@Transactional(readOnly = true)
 	public CategoriaDTO buscarPorId(Long id) {
 		Optional<Categoria> opcional = repository.findById(id);
-		Categoria categoria = opcional.get();
+		
+		Categoria categoria = opcional.orElseThrow(
+			() -> new EntidadeNaoEncontradaException("Entidade não encontrada")
+		);
+		
 		CategoriaDTO dto = new CategoriaDTO(categoria);
 		return dto;
 	}
