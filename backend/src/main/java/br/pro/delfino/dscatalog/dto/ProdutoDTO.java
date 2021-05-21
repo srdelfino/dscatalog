@@ -9,11 +9,15 @@ import java.util.Set;
 
 import br.pro.delfino.dscatalog.entities.Categoria;
 import br.pro.delfino.dscatalog.entities.Produto;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 @NoArgsConstructor
+@EqualsAndHashCode(of = "id")
+@ToString
 public class ProdutoDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	

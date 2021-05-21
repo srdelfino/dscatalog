@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +36,7 @@ public class CategoriaService {
 	}
 	
 	@Transactional(readOnly = true)
-	public Page<CategoriaDTO> buscarTudo(PageRequest paginacao) {
+	public Page<CategoriaDTO> buscarTudo(Pageable paginacao) {
 		Page<Categoria> lista = repositorio.findAll(paginacao);
 		
 		Page<CategoriaDTO> listaDTO = lista
@@ -85,6 +85,7 @@ public class CategoriaService {
 	public void excluir(Long id) {
 		try {
 			repositorio.deleteById(id);
+			repositorio.flush();
 		} catch (EmptyResultDataAccessException excecao) {
 			throw new EntidadeNaoEncontradaException("ID não encontrado: " + id);
 		} catch (DataIntegrityViolationException excecao) {

@@ -13,7 +13,7 @@ import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaExcepti
 import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;
 
 @ControllerAdvice
-public class RosourceExceptionHandler {
+public class ResourceExceptionHandler {
 	@ExceptionHandler(EntidadeNaoEncontradaException.class)
 	public ResponseEntity<ErroPadrao> entidadeNaoEncontrada(
 		EntidadeNaoEncontradaException excecao, 
@@ -31,7 +31,7 @@ public class RosourceExceptionHandler {
 	
 	@ExceptionHandler(ViolacaoIntegridadeDadosException.class)
 	public ResponseEntity<ErroPadrao> violacaoIntegridadeDados(
-		EntidadeNaoEncontradaException excecao, 
+		ViolacaoIntegridadeDadosException excecao, 
 		HttpServletRequest requisicao){
 		
 		ErroPadrao erro = new ErroPadrao();
