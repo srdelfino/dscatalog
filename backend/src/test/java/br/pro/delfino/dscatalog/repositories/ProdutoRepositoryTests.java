@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.dao.EmptyResultDataAccessException;
 
 import br.pro.delfino.dscatalog.entities.Produto;
 
@@ -23,4 +24,13 @@ public class ProdutoRepositoryTests {
 		
 		Assertions.assertFalse(opcional.isPresent());
 	}
+	
+	@Test
+	public void excluirDeveriaLancarEmptyResultDataAccessExceptionQuandoIdNaoExiste() {
+		Long id = 1000L;
+		
+		Assertions.assertThrows(EmptyResultDataAccessException.class, () -> {	
+			repositorio.deleteById(id);
+		});
+	}	
 }
