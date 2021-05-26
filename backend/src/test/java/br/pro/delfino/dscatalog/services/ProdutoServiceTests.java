@@ -1,6 +1,7 @@
 package br.pro.delfino.dscatalog.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
@@ -21,9 +22,11 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import br.pro.delfino.dscatalog.dto.ProdutoDTO;
 import br.pro.delfino.dscatalog.entities.Produto;
 import br.pro.delfino.dscatalog.factories.ProdutoFactory;
 import br.pro.delfino.dscatalog.repositories.ProdutoRepository;
@@ -56,7 +59,7 @@ public class ProdutoServiceTests {
 		
 		when(repositorio.save(ArgumentMatchers.any())).thenReturn(produto);
 		
-		when(repositorio.findAll((Pageable)ArgumentMatchers.any())).thenReturn(pagina);
+		when(repositorio.findAll((Pageable) ArgumentMatchers.any())).thenReturn(pagina);
 		
 		when(repositorio.findById(idExistente)).thenReturn(Optional.of(produto));
 		when(repositorio.findById(idNaoExistente)).thenReturn(Optional.empty());
@@ -65,6 +68,15 @@ public class ProdutoServiceTests {
 		doThrow(EmptyResultDataAccessException.class).when(repositorio).deleteById(idNaoExistente);
 		doThrow(DataIntegrityViolationException.class).when(repositorio).deleteById(idDependente);
 	} 
+	
+	@Test
+	public void buscarTudoDeveriaRetornarPagina() {
+		Pageable paginacao = PageRequest.of(0, 10);
+		Page<ProdutoDTO> pagina = servico.buscarTudo(paginacao);
+		
+		assertNotNull(pagina);
+		verify(repositorio, times(1)).findAll(paginacao);
+	}
 
 	@Test
 	public void excluirDeveriaFazerNadaQuandoIdExistir() {
