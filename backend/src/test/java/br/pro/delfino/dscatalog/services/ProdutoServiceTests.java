@@ -12,11 +12,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import br.pro.delfino.dscatalog.repositories.ProdutoRepository;
 import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
+import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;
 
 @ExtendWith(SpringExtension.class)
 public class ProdutoServiceTests {
@@ -28,16 +30,20 @@ public class ProdutoServiceTests {
 
 	private Long idExistente;
 	private Long idNaoExistente;
+	private Long idDependente;
 
 	@BeforeEach
 	public void configurar() {
 		idExistente = 1L;
 		idNaoExistente = 1000L;
+		idDependente = 4L;
 
 		doNothing().when(repositorio).deleteById(idExistente);
 		
 		doThrow(EmptyResultDataAccessException.class).when(repositorio).deleteById(idNaoExistente);
-	}
+		
+		doThrow(DataIntegrityViolationException.class).when(repositorio).deleteById(idDependente);
+	} 
 
 	@Test
 	public void excluirDeveriaFazerNadaQuandoIdExistir() {
@@ -49,7 +55,16 @@ public class ProdutoServiceTests {
 	}
 	
 	@Test
-	public void excluirDeveriaLancarEntidadeNaoEncontradaExceptionQuandoIdNaoExistir() {
+	public void excluirDeveriaLancarEntidadeNaoEncontradaExceptionQuandoIdDependente() {
+		assertThrows(ViolacaoIntegridadeDadosException.class, () -> {
+			servico.excluir(idDependente);
+		});
+
+		verify(repositorio, times(1)).deleteById(idDependente);
+	}
+	
+	@Test
+	public void excluirDeveriaLancarViolacaoIntegridadeDadosExceptionQuandoIdNaoExistir() {
 		assertThrows(EntidadeNaoEncontradaException.class, () -> {
 			servico.excluir(idNaoExistente);
 		});
