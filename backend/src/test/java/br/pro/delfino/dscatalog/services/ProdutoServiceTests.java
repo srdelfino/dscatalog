@@ -3,6 +3,7 @@ package br.pro.delfino.dscatalog.services;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -17,7 +18,6 @@ import javax.persistence.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -74,9 +74,9 @@ public class ProdutoServiceTests {
 		
 		dto = ProdutoDTOFactory.criar();
 		
-		when(produtoRepositorio.save(ArgumentMatchers.any())).thenReturn(produto);
+		when(produtoRepositorio.save(any())).thenReturn(produto);
 		
-		when(produtoRepositorio.findAll((Pageable) ArgumentMatchers.any())).thenReturn(pagina);
+		when(produtoRepositorio.findAll((Pageable) any())).thenReturn(pagina);
 		
 		when(produtoRepositorio.findById(idExistente)).thenReturn(Optional.of(produto));
 		when(produtoRepositorio.findById(idNaoExistente)).thenReturn(Optional.empty());
