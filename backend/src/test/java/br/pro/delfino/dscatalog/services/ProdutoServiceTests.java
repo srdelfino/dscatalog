@@ -1,6 +1,7 @@
 package br.pro.delfino.dscatalog.services;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.times;
@@ -15,6 +16,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import br.pro.delfino.dscatalog.repositories.ProdutoRepository;
+import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
 
 @ExtendWith(SpringExtension.class)
 public class ProdutoServiceTests {
@@ -33,6 +35,7 @@ public class ProdutoServiceTests {
 		idNaoExistente = 1000L;
 
 		doNothing().when(repositorio).deleteById(idExistente);
+		
 		doThrow(EmptyResultDataAccessException.class).when(repositorio).deleteById(idNaoExistente);
 	}
 
@@ -43,5 +46,14 @@ public class ProdutoServiceTests {
 		});
 
 		verify(repositorio, times(1)).deleteById(idExistente);
+	}
+	
+	@Test
+	public void excluirDeveriaLancarEntidadeNaoEncontradaExceptionQuandoIdNaoExistir() {
+		assertThrows(EntidadeNaoEncontradaException.class, () -> {
+			servico.excluir(idNaoExistente);
+		});
+
+		verify(repositorio, times(1)).deleteById(idNaoExistente);
 	}
 }
