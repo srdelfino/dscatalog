@@ -44,6 +44,7 @@ public class ProdutoRepositoryTests {
 		});
 	}	
 	
+	@Test
 	public void inserirDeveriarPersistirComAutoIncrementoQuandoIdEhNulo() {
 		Produto produto = ProdutoFactory.criar();
 		produto.setId(null);
@@ -52,6 +53,17 @@ public class ProdutoRepositoryTests {
 		
 		Assertions.assertNotNull(produto.getId());
 		Assertions.assertEquals(totalDeProdutos + 1, produto.getId());
-		
+	}
+	
+	@Test
+	public void buscarPorCodigoDeveriaRetornarNaoVazioQuandoIdExistir(){
+		Optional<Produto> opcional = repositorio.findById(idExistente);
+		Assertions.assertTrue(opcional.isPresent());
+	}
+	
+	@Test
+	public void buscarPorCodigoDeveriaRetornarVazioQuandoIdNaoExistir(){
+		Optional<Produto> opcional = repositorio.findById(idNaoExistente);
+		Assertions.assertTrue(opcional.isEmpty());
 	}
 }
