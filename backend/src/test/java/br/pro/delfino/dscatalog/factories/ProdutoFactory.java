@@ -3,7 +3,6 @@ package br.pro.delfino.dscatalog.factories;
 import java.math.BigDecimal;
 import java.time.Instant;
 
-import br.pro.delfino.dscatalog.entities.Categoria;
 import br.pro.delfino.dscatalog.entities.Produto;
 
 public class ProdutoFactory {
@@ -18,8 +17,7 @@ public class ProdutoFactory {
 		
 		produto
 			.getCategorias()
-			.add(
-				new Categoria(2L, null));
+			.add(CategoriaFactory.criar());
 		return produto;
 	}
 }

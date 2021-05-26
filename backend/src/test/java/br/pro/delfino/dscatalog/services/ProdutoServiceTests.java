@@ -12,6 +12,8 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.Optional;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -27,8 +29,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import br.pro.delfino.dscatalog.dto.ProdutoDTO;
+import br.pro.delfino.dscatalog.entities.Categoria;
 import br.pro.delfino.dscatalog.entities.Produto;
+import br.pro.delfino.dscatalog.factories.CategoriaFactory;
+import br.pro.delfino.dscatalog.factories.ProdutoDTOFactory;
 import br.pro.delfino.dscatalog.factories.ProdutoFactory;
+import br.pro.delfino.dscatalog.repositories.CategoriaRepository;
 import br.pro.delfino.dscatalog.repositories.ProdutoRepository;
 import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
 import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;
@@ -39,14 +45,21 @@ public class ProdutoServiceTests {
 	private ProdutoService servico;
 
 	@Mock
-	private ProdutoRepository repositorio;
+	private CategoriaRepository categoriaRepositorio;
+	
+	@Mock
+	private ProdutoRepository produtoRepositorio;
 
 	private Long idExistente;
 	private Long idNaoExistente;
 	private Long idDependente;
 	
+	private Categoria categoria;
 	private Produto produto;
+	
 	private Page<Produto> pagina;
+	
+	private ProdutoDTO dto;
 
 	@BeforeEach
 	public void configurar() {
@@ -54,19 +67,28 @@ public class ProdutoServiceTests {
 		idNaoExistente = 2L;
 		idDependente = 3L;
 		
+		categoria = CategoriaFactory.criar();
 		produto = ProdutoFactory.criar();
+		
 		pagina = new PageImpl<>(List.of(produto));
 		
-		when(repositorio.save(ArgumentMatchers.any())).thenReturn(produto);
+		dto = ProdutoDTOFactory.criar();
 		
-		when(repositorio.findAll((Pageable) ArgumentMatchers.any())).thenReturn(pagina);
+		when(produtoRepositorio.save(ArgumentMatchers.any())).thenReturn(produto);
 		
-		when(repositorio.findById(idExistente)).thenReturn(Optional.of(produto));
-		when(repositorio.findById(idNaoExistente)).thenReturn(Optional.empty());
+		when(produtoRepositorio.findAll((Pageable) ArgumentMatchers.any())).thenReturn(pagina);
+		
+		when(produtoRepositorio.findById(idExistente)).thenReturn(Optional.of(produto));
+		when(produtoRepositorio.findById(idNaoExistente)).thenReturn(Optional.empty());
 
-		doNothing().when(repositorio).deleteById(idExistente);
-		doThrow(EmptyResultDataAccessException.class).when(repositorio).deleteById(idNaoExistente);
-		doThrow(DataIntegrityViolationException.class).when(repositorio).deleteById(idDependente);
+		doNothing().when(produtoRepositorio).deleteById(idExistente);
+		doThrow(EmptyResultDataAccessException.class).when(produtoRepositorio).deleteById(idNaoExistente);
+		doThrow(DataIntegrityViolationException.class).when(produtoRepositorio).deleteById(idDependente);
+		
+		when(produtoRepositorio.getOne(idExistente)).thenReturn(produto);
+		when(produtoRepositorio.getOne(idNaoExistente)).thenThrow(EntityNotFoundException.class);
+		when(categoriaRepositorio.getOne(idExistente)).thenReturn(categoria);
+		when(categoriaRepositorio.getOne(idNaoExistente)).thenThrow(EntityNotFoundException.class);
 	} 
 	
 	@Test
@@ -75,7 +97,24 @@ public class ProdutoServiceTests {
 		Page<ProdutoDTO> pagina = servico.buscarTudo(paginacao);
 		
 		assertNotNull(pagina);
-		verify(repositorio, times(1)).findAll(paginacao);
+		verify(produtoRepositorio, times(1)).findAll(paginacao);
+	}
+	
+	@Test
+	public void buscarPorIdDeveriaRetornarProdutoDTOQuandoIdExistir() {
+		ProdutoDTO dto = servico.buscarPorId(idExistente);
+		
+		assertNotNull(dto);
+		verify(produtoRepositorio, times(1)).findById(idExistente);
+	}
+	
+	@Test
+	public void buscarPorIdDeveriaLancarEntidadeNaoEncontradaExceptionQuandoIdNaoExistir() {
+		assertThrows(EntidadeNaoEncontradaException.class, () -> {
+			servico.buscarPorId(idNaoExistente);
+		});
+		
+		verify(produtoRepositorio, times(1)).findById(idNaoExistente);
 	}
 
 	@Test
@@ -84,7 +123,7 @@ public class ProdutoServiceTests {
 			servico.excluir(idExistente);
 		});
 
-		verify(repositorio, times(1)).deleteById(idExistente);
+		verify(produtoRepositorio, times(1)).deleteById(idExistente);
 	}
 	
 	@Test
@@ -93,7 +132,7 @@ public class ProdutoServiceTests {
 			servico.excluir(idDependente);
 		});
 
-		verify(repositorio, times(1)).deleteById(idDependente);
+		verify(produtoRepositorio, times(1)).deleteById(idDependente);
 	}
 	
 	@Test
@@ -102,6 +141,23 @@ public class ProdutoServiceTests {
 			servico.excluir(idNaoExistente);
 		});
 
-		verify(repositorio, times(1)).deleteById(idNaoExistente);
+		verify(produtoRepositorio, times(1)).deleteById(idNaoExistente);
+	}
+	
+	@Test
+	public void editarDeveriaRetornarProdutoDTOQuandoIdExistir() {
+		ProdutoDTO dto = servico.editar(idExistente, this.dto);
+		
+		assertNotNull(dto);
+		verify(produtoRepositorio, times(1)).save(produto);
+	}
+	
+	@Test
+	public void editarDeveriaLancarEntidadeNaoEncontradaExceptionQuandoIdNaoExistir() {
+		assertThrows(EntidadeNaoEncontradaException.class, () -> {
+			servico.editar(idNaoExistente, this.dto);
+		});
+		
+		verify(produtoRepositorio, times(0)).save(produto);
 	}
 }
