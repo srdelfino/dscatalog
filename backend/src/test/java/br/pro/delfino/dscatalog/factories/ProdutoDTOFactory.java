@@ -1,4 +1,4 @@
-package br.pro.delfino.dscatalog.factory;
+package br.pro.delfino.dscatalog.factories;
 
 import br.pro.delfino.dscatalog.dto.ProdutoDTO;
 import br.pro.delfino.dscatalog.entities.Produto;

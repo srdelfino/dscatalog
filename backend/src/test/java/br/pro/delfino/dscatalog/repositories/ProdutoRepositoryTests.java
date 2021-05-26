@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import br.pro.delfino.dscatalog.entities.Produto;
-import br.pro.delfino.dscatalog.factory.ProdutoFactory;
+import br.pro.delfino.dscatalog.factories.ProdutoFactory;
 
 @DataJpaTest
 public class ProdutoRepositoryTests {

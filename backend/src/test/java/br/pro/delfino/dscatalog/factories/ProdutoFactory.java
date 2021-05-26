@@ -1,4 +1,4 @@
-package br.pro.delfino.dscatalog.factory;
+package br.pro.delfino.dscatalog.factories;
 
 import java.math.BigDecimal;
 import java.time.Instant;
