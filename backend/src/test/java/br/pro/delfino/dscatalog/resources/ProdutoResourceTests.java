@@ -5,7 +5,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,7 +28,9 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.pro.delfino.dscatalog.dto.ProdutoDTO;
+import br.pro.delfino.dscatalog.entities.Produto;
 import br.pro.delfino.dscatalog.factories.ProdutoDTOFactory;
+import br.pro.delfino.dscatalog.factories.ProdutoFactory;
 import br.pro.delfino.dscatalog.services.ProdutoService;
 import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
 import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;
@@ -42,6 +46,8 @@ public class ProdutoResourceTests {
 	@Autowired
 	private ObjectMapper mapeamento;
 	
+	private Produto produto;
+	
 	private ProdutoDTO dto;
 	
 	private Page<ProdutoDTO> pagina;
@@ -52,6 +58,7 @@ public class ProdutoResourceTests {
 	
 	@BeforeEach
 	public void configurar() {
+		produto = ProdutoFactory.criar();
 		dto = ProdutoDTOFactory.criar();
 		
 		pagina = new PageImpl<>(List.of(dto));
@@ -59,6 +66,8 @@ public class ProdutoResourceTests {
 		idExistente = 1L;
 		idNaoExistente = 2L;
 		idDependente = 3L;
+		
+		when(servico.inserir(any())).thenReturn(dto);
 		
 		when(servico.buscarTudo(any())).thenReturn(pagina);
 		
@@ -72,6 +81,23 @@ public class ProdutoResourceTests {
 		doNothing().when(servico).excluir(idExistente);
 		doThrow(EntidadeNaoEncontradaException.class).when(servico).excluir(idNaoExistente);
 		doThrow(ViolacaoIntegridadeDadosException.class).when(servico).excluir(idDependente);
+	}
+	
+	@Test
+	public void inserirDeveriaRetornarCriadoEProdutoDTO() throws Exception {
+		String corpo = mapeamento.writeValueAsString(dto);
+		
+		ResultActions resultado = 
+				mockMvc.perform(
+					post("/produtos", idNaoExistente)
+						.content(corpo)
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON));
+		
+		resultado.andExpect(status().isCreated());
+		resultado.andExpect(jsonPath("$.id").exists());
+		resultado.andExpect(jsonPath("$.nome").exists());
+		resultado.andExpect(jsonPath("$.descricao").exists());
 	}
 	
 	@Test
@@ -100,6 +126,24 @@ public class ProdutoResourceTests {
 		ResultActions resultado = 
 				mockMvc.perform(
 					get("/produtos/{id}", idNaoExistente).accept(MediaType.APPLICATION_JSON));
+		
+		resultado.andExpect(status().isNotFound());
+	}
+	
+	@Test
+	public void excluirDeveriaRetornarSemConteudoQuandoIdExistir() throws Exception {
+		ResultActions resultado = 
+				mockMvc.perform(
+					delete("/produtos/{id}", idExistente).accept(MediaType.APPLICATION_JSON));
+		
+		resultado.andExpect(status().isNoContent());
+	}
+	
+	@Test
+	public void excluirDeveriaRetornarNaoEncontradoQuandoIdNaoExistir() throws Exception {
+		ResultActions resultado = 
+				mockMvc.perform(
+					delete("/produtos/{id}", idNaoExistente).accept(MediaType.APPLICATION_JSON));
 		
 		resultado.andExpect(status().isNotFound());
 	}
