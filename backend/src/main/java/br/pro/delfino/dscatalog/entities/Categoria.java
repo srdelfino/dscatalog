@@ -12,7 +12,6 @@ import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,6 @@ import lombok.ToString;
 @Entity
 @Table(name = "categoria")
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @ToString
 public class Categoria implements Serializable {
@@ -45,6 +43,12 @@ public class Categoria implements Serializable {
 	@Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
 	@Getter
 	private Instant atualizadoEm;
+	
+	public Categoria(Long id, String nome) {
+		super();
+		this.id = id;
+		this.nome = nome;
+	}
 	
 	@PrePersist
 	public void antesInserir() {

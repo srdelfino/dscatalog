@@ -10,6 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 import br.pro.delfino.dscatalog.entities.Produto;
+import br.pro.delfino.dscatalog.factory.ProdutoFactory;
 
 @DataJpaTest
 public class ProdutoRepositoryTests {
@@ -18,11 +19,14 @@ public class ProdutoRepositoryTests {
 	
 	private Long idExistente;
 	private Long idNaoExistente;
+	private Long totalDeProdutos;
 	
 	@BeforeEach
 	public void configurar() {
 		idExistente = 1L;
 		idNaoExistente = 1000L;
+		
+		totalDeProdutos = 25L;
 	}
 	
 	@Test
@@ -39,4 +43,15 @@ public class ProdutoRepositoryTests {
 			repositorio.deleteById(idNaoExistente);
 		});
 	}	
+	
+	public void inserirDeveriarPersistirComAutoIncrementoQuandoIdEhNulo() {
+		Produto produto = ProdutoFactory.criar();
+		produto.setId(null);
+		
+		repositorio.save(produto);
+		
+		Assertions.assertNotNull(produto.getId());
+		Assertions.assertEquals(totalDeProdutos + 1, produto.getId());
+		
+	}
 }
