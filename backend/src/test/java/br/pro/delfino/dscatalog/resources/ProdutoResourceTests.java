@@ -2,6 +2,8 @@ package br.pro.delfino.dscatalog.resources;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -27,6 +29,7 @@ import br.pro.delfino.dscatalog.dto.ProdutoDTO;
 import br.pro.delfino.dscatalog.factories.ProdutoDTOFactory;
 import br.pro.delfino.dscatalog.services.ProdutoService;
 import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
+import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;
 
 @WebMvcTest(ProdutoResource.class)
 public class ProdutoResourceTests {
@@ -45,6 +48,7 @@ public class ProdutoResourceTests {
 	
 	private Long idExistente;
 	private Long idNaoExistente;
+	private Long idDependente;
 	
 	@BeforeEach
 	public void configurar() {
@@ -54,6 +58,7 @@ public class ProdutoResourceTests {
 		
 		idExistente = 1L;
 		idNaoExistente = 2L;
+		idDependente = 3L;
 		
 		when(servico.buscarTudo(any())).thenReturn(pagina);
 		
@@ -63,6 +68,10 @@ public class ProdutoResourceTests {
 		
 		when(servico.editar(eq(idExistente), any())).thenReturn(dto);
 		when(servico.editar(eq(idNaoExistente), any())).thenThrow(EntidadeNaoEncontradaException.class);
+		
+		doNothing().when(servico).excluir(idExistente);
+		doThrow(EntidadeNaoEncontradaException.class).when(servico).excluir(idNaoExistente);
+		doThrow(ViolacaoIntegridadeDadosException.class).when(servico).excluir(idDependente);
 	}
 	
 	@Test
