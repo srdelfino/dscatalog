@@ -46,8 +46,6 @@ public class ProdutoResourceTests {
 	@Autowired
 	private ObjectMapper mapeamento;
 	
-	private Produto produto;
-	
 	private ProdutoDTO dto;
 	
 	private Page<ProdutoDTO> pagina;
@@ -58,7 +56,6 @@ public class ProdutoResourceTests {
 	
 	@BeforeEach
 	public void configurar() {
-		produto = ProdutoFactory.criar();
 		dto = ProdutoDTOFactory.criar();
 		
 		pagina = new PageImpl<>(List.of(dto));
