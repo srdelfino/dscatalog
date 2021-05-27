@@ -28,9 +28,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import br.pro.delfino.dscatalog.dto.ProdutoDTO;
-import br.pro.delfino.dscatalog.entities.Produto;
 import br.pro.delfino.dscatalog.factories.ProdutoDTOFactory;
-import br.pro.delfino.dscatalog.factories.ProdutoFactory;
 import br.pro.delfino.dscatalog.services.ProdutoService;
 import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
 import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;

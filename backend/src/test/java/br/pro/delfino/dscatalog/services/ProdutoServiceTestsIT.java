@@ -14,7 +14,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 
 import br.pro.delfino.dscatalog.dto.ProdutoDTO;
 import br.pro.delfino.dscatalog.repositories.ProdutoRepository;
