@@ -28,8 +28,6 @@ INSERT INTO produto (nome, preco, data, descricao, imagem) VALUES ('PC Gamer Min
 INSERT INTO produto (nome, preco, data, descricao, imagem) VALUES ('PC Gamer Boo', 2350.0, TIMESTAMP WITH TIME ZONE '2020-07-14T10:00:00Z', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 'https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/24-big.jpg');
 INSERT INTO produto (nome, preco, data, descricao, imagem) VALUES ('PC Gamer Foo', 4170.0, TIMESTAMP WITH TIME ZONE '2020-07-14T10:00:00Z', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 'https://raw.githubusercontent.com/devsuperior/dscatalog-resources/master/backend/img/25-big.jpg');
 
-
-
 INSERT INTO produto_categoria (produto_id, categoria_id) VALUES (1, 2);
 INSERT INTO produto_categoria (produto_id, categoria_id) VALUES (2, 1);
 INSERT INTO produto_categoria (produto_id, categoria_id) VALUES (2, 3);
@@ -56,3 +54,13 @@ INSERT INTO produto_categoria (produto_id, categoria_id) VALUES (22, 3);
 INSERT INTO produto_categoria (produto_id, categoria_id) VALUES (23, 3);
 INSERT INTO produto_categoria (produto_id, categoria_id) VALUES (24, 3);
 INSERT INTO produto_categoria (produto_id, categoria_id) VALUES (25, 3);
+
+INSERT INTO usuario (nome, sobrenome, email, senha) VALUES ('Alex', 'Brown', 'alex@gmail.com', '$2a$10$eACCYoNOHEqXve8aIWT8Nu3PkMXWBaOxJ9aORUYzfMQCbVBIhZ8tG');
+INSERT INTO usuario (nome, sobrenome, email, senha) VALUES ('Maria', 'Green', 'maria@gmail.com', '$2a$10$eACCYoNOHEqXve8aIWT8Nu3PkMXWBaOxJ9aORUYzfMQCbVBIhZ8tG');
+
+INSERT INTO perfil (nome) VALUES ('ROLE_OPERADOR');
+INSERT INTO perfil (nome) VALUES ('ROLE_ADMINISTRADOR');
+
+INSERT INTO usuario_perfil (usuario_id, perfil_id) VALUES (1, 1);
+INSERT INTO usuario_perfil (usuario_id, perfil_id) VALUES (2, 1);
+INSERT INTO usuario_perfil (usuario_id, perfil_id) VALUES (2, 2);

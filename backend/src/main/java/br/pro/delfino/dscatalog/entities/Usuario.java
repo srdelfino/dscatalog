@@ -8,7 +8,9 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -49,7 +51,12 @@ public class Usuario implements Serializable {
 	@Setter
 	private String senha;
 	
-	@OneToMany
+	@ManyToMany
+	@JoinTable(
+		name = "usuario_perfil",
+		joinColumns = @JoinColumn(name = "usuario_id"),
+		inverseJoinColumns = @JoinColumn(name = "perfil_id")
+	)
 	@Getter
 	private Set<Perfil> perfis = new HashSet<>();
 }
