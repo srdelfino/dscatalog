@@ -7,5 +7,5 @@ import br.pro.delfino.dscatalog.entities.Usuario;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-
+	Usuario findByEmail (String email);
 }
