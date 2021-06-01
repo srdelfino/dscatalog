@@ -46,16 +46,21 @@ public class ResourceExceptionHandler {
 	}
 	
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErroPadrao> argumentoMetodoNaoValido(
+	public ResponseEntity<ErroDeValidacao> argumentoMetodoNaoValido(
 		MethodArgumentNotValidException excecao, 
 		HttpServletRequest requisicao){
 		
-		ErroPadrao erro = new ErroPadrao();
+		ErroDeValidacao erro = new ErroDeValidacao();
 		erro.setHorario(Instant.now());
 		erro.setSituacao(HttpStatus.UNPROCESSABLE_ENTITY.value());
 		erro.setErro("Erro de validação");
 		erro.setMensagem(excecao.getMessage());
 		erro.setCaminho(requisicao.getRequestURI());
+		
+		excecao
+			.getBindingResult()
+			.getFieldErrors()
+			.forEach(campoDeErrro -> erro.adicionarErro(campoDeErrro.getField(), campoDeErrro.getDefaultMessage()));
 		
 		return ResponseEntity.unprocessableEntity().body(erro);
 	}
