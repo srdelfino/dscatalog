@@ -11,14 +11,14 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.pro.delfino.dscatalog.dto.UsuarioDTO;
-import br.pro.delfino.dscatalog.entities.Categoria;
+import br.pro.delfino.dscatalog.dto.UsuarioInsercaoDTO;
 import br.pro.delfino.dscatalog.entities.Perfil;
 import br.pro.delfino.dscatalog.entities.Usuario;
-import br.pro.delfino.dscatalog.repositories.CategoriaRepository;
 import br.pro.delfino.dscatalog.repositories.PerfilRepository;
 import br.pro.delfino.dscatalog.repositories.UsuarioRepository;
 import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaException;
@@ -31,6 +31,9 @@ public class UsuarioService {
 	
 	@Autowired
 	private PerfilRepository perfilRepositorio;
+	
+	@Autowired
+	private BCryptPasswordEncoder codificador;
 
 	@Transactional(readOnly = true)
 	public List<UsuarioDTO> buscarTudo() {
@@ -63,13 +66,15 @@ public class UsuarioService {
 	}
 
 	@Transactional
-	public UsuarioDTO inserir(UsuarioDTO dto) {
+	public UsuarioDTO inserir(UsuarioInsercaoDTO dto) {
 		Usuario entidade = new Usuario();
-		converterDTOParaEntidade(dto, entidade);
 
+		converterDTOParaEntidade(dto, entidade);
+		entidade.setSenha(codificador.encode(dto.getSenha()));
+		
 		usuarioRepositorio.save(entidade);
 
-		dto = new UsuarioDTO(entidade);
+		dto = new UsuarioInsercaoDTO(entidade);
 		return dto;
 	}
 
