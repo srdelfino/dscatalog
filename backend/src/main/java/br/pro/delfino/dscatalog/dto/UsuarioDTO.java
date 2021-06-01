@@ -4,6 +4,9 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 import br.pro.delfino.dscatalog.entities.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -23,6 +26,7 @@ public class UsuarioDTO implements Serializable {
 	@Setter
 	private Long id;
 	
+	@NotBlank(message = "Campo obrigatório")
 	@Getter
 	@Setter
 	private String nome;
@@ -31,6 +35,7 @@ public class UsuarioDTO implements Serializable {
 	@Setter
 	private String sobrenome;
 	
+	@Email(message = "Email inválido")
 	@Getter
 	@Setter
 	private String email;

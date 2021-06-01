@@ -7,6 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.PastOrPresent;
+import javax.validation.constraints.Positive;
+import javax.validation.constraints.Size;
+
 import br.pro.delfino.dscatalog.entities.Categoria;
 import br.pro.delfino.dscatalog.entities.Produto;
 import lombok.EqualsAndHashCode;
@@ -25,14 +30,18 @@ public class ProdutoDTO implements Serializable {
 	@Setter
 	private Long id;
 	
+	@NotBlank(message = "Campo obrigatório")
+	@Size(min = 5, max = 60, message = "Nome deve ter entre 5 e 60 caracteres")
 	@Getter
 	@Setter
 	private String nome;
 	
+	@NotBlank(message = "Campo obrigatório")
 	@Getter
 	@Setter
 	private String descricao;
 	
+	@Positive(message = "Preço deve ser um valor positivo")
 	@Getter
 	@Setter
 	private BigDecimal preco;
@@ -41,6 +50,7 @@ public class ProdutoDTO implements Serializable {
 	@Setter
 	private String imagem;
 	
+	@PastOrPresent(message = "A data do produto não pode ser futura")
 	@Getter
 	@Setter
 	private Instant data;

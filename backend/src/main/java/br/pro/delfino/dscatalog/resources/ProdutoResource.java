@@ -2,6 +2,8 @@ package br.pro.delfino.dscatalog.resources;
 
 import java.net.URI;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -38,14 +40,14 @@ public class ProdutoResource {
 	}
 
 	@PostMapping
-	public ResponseEntity<ProdutoDTO> inserir(@RequestBody ProdutoDTO dto) {
+	public ResponseEntity<ProdutoDTO> inserir(@Valid @RequestBody ProdutoDTO dto) {
 		dto = servico.inserir(dto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(dto.getId()).toUri();
 		return ResponseEntity.created(uri).body(dto);
 	}
 
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<ProdutoDTO> editar(@PathVariable Long id, @RequestBody ProdutoDTO dto) {
+	public ResponseEntity<ProdutoDTO> editar(@PathVariable Long id, @Valid @RequestBody ProdutoDTO dto) {
 		dto = servico.editar(id, dto);
 		return ResponseEntity.ok(dto);
 	}
