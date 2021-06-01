@@ -42,6 +42,7 @@ public class UsuarioDTO implements Serializable {
 		this.id = usuario.getId();
 		this.nome = usuario.getNome();
 		this.sobrenome = usuario.getSobrenome();
+		this.email = usuario.getEmail();
 		
 		usuario.getPerfis().forEach(perfil -> this.perfis.add(new PerfilDTO(perfil)));
 	}
