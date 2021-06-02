@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.pro.delfino.dscatalog.dto.UsuarioDTO;
+import br.pro.delfino.dscatalog.dto.UsuarioEdicaoDTO;
 import br.pro.delfino.dscatalog.dto.UsuarioInsercaoDTO;
 import br.pro.delfino.dscatalog.entities.Perfil;
 import br.pro.delfino.dscatalog.entities.Usuario;
@@ -74,20 +75,20 @@ public class UsuarioService {
 		
 		usuarioRepositorio.save(entidade);
 
-		dto = new UsuarioInsercaoDTO(entidade);
-		return dto;
+		UsuarioDTO dtoRetorno = new UsuarioDTO(entidade);
+		return dtoRetorno;
 	}
 
 	@Transactional
-	public UsuarioDTO editar(Long id, UsuarioDTO dto) {
+	public UsuarioDTO editar(Long id, UsuarioEdicaoDTO dto) {
 		try {
 			Usuario entidade = usuarioRepositorio.getOne(id);
 			converterDTOParaEntidade(dto, entidade);
 
 			usuarioRepositorio.save(entidade);
 
-			dto = new UsuarioDTO(entidade);
-			return dto;
+			UsuarioDTO dtoRetorno = new UsuarioDTO (entidade);
+			return dtoRetorno;
 		} catch (EntityNotFoundException excecao) {
 			throw new EntidadeNaoEncontradaException("ID não encontrado: " + id);
 		}

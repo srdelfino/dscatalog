@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.pro.delfino.dscatalog.dto.UsuarioDTO;
+import br.pro.delfino.dscatalog.dto.UsuarioEdicaoDTO;
 import br.pro.delfino.dscatalog.dto.UsuarioInsercaoDTO;
 import br.pro.delfino.dscatalog.services.UsuarioService;
 
@@ -48,9 +49,9 @@ public class UsuarioResource {
 	}
 
 	@PutMapping(value = "/{id}")
-	public ResponseEntity<UsuarioDTO> editar(@PathVariable Long id, @Valid @RequestBody UsuarioDTO dto) {
-		dto = servico.editar(id, dto);
-		return ResponseEntity.ok(dto);
+	public ResponseEntity<UsuarioDTO> editar(@PathVariable Long id, @Valid @RequestBody UsuarioEdicaoDTO dto) {
+		UsuarioDTO dtoRetorno = servico.editar(id, dto);
+		return ResponseEntity.ok(dtoRetorno);
 	}
 
 	@DeleteMapping(value = "/{id}")
