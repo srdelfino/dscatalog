@@ -6,11 +6,16 @@ import java.util.stream.Collectors;
 
 import javax.persistence.EntityNotFoundException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +31,8 @@ import br.pro.delfino.dscatalog.services.exceptions.EntidadeNaoEncontradaExcepti
 import br.pro.delfino.dscatalog.services.exceptions.ViolacaoIntegridadeDadosException;
 
 @Service
-public class UsuarioService {
+public class UsuarioService implements UserDetailsService {
+	private static Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 	@Autowired
 	private UsuarioRepository usuarioRepositorio;
 	
@@ -117,5 +123,18 @@ public class UsuarioService {
 			Perfil perfilEntidade = perfilRepositorio.getOne(perfilDTO.getId());
 			entidade.getPerfis().add(perfilEntidade);
 		});
+	}
+
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		Usuario usuario = usuarioRepositorio.findByEmail(username);
+		
+		if (usuario == null) {
+			logger.error("Usuário não encontrado: " + username);
+			throw new UsernameNotFoundException("Email não encontrado");
+		}
+		
+		logger.info("Usuário encontrado: " + username);
+		return usuario;
 	}
 }
