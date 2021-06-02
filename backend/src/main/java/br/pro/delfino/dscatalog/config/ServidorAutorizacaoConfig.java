@@ -1,6 +1,7 @@
 package br.pro.delfino.dscatalog.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,6 +16,15 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 @Configuration
 @EnableAuthorizationServer
 public class ServidorAutorizacaoConfig extends AuthorizationServerConfigurerAdapter {
+	@Value("${security.oauth2.client.client-id}")
+	private String cliente;
+	
+	@Value("${security.oauth2.client.client-secret}")
+	private String segredo;
+	
+	@Value("${jwt.duration}")
+	private Integer duracao;
+	
 	@Autowired
 	private BCryptPasswordEncoder codificador;
 	
@@ -38,11 +48,11 @@ public class ServidorAutorizacaoConfig extends AuthorizationServerConfigurerAdap
 	public void configure(ClientDetailsServiceConfigurer clientes) throws Exception {
 		clientes
 			.inMemory()
-			.withClient("dscatalog")
-			.secret(codificador.encode("dscatalog123"))
+			.withClient(cliente)
+			.secret(codificador.encode(segredo))
 			.scopes("read", "write")
 			.authorizedGrantTypes("password")
-			.accessTokenValiditySeconds(86400);
+			.accessTokenValiditySeconds(duracao);
 	}
 	
 	@Override
