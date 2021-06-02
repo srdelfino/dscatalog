@@ -80,14 +80,13 @@ public class Usuario implements Serializable, UserDetails {
 	}
 
 	@Override
-	public String getPassword() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public String getUsername() {
 		return email;
+	}
+	
+	@Override
+	public String getPassword() {
+		return senha;
 	}
 
 	@Override

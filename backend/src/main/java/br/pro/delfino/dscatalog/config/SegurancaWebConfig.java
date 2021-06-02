@@ -11,8 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
-import br.pro.delfino.dscatalog.services.UsuarioService;
-
 @Configuration
 @EnableWebSecurity
 public class SegurancaWebConfig extends WebSecurityConfigurerAdapter {
